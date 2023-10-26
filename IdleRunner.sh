@@ -3,6 +3,23 @@
 
 # Define the path to the config file
 config_file=".IdleRunner.config"
+recentActivityTimestamp=$(</tmp/IdleRunner_last_activity_timestamp)
+# Regular expression pattern
+pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+
+# Check if the date and time string matches the pattern.
+# If the value is invalid, or equal to 1, there's no need to proceed.
+
+if [[ $recentActivityTimestamp =~ $pattern ]]; then
+  echo "Date and time format is valid." #Debug
+
+elif [[ $recentActivityTimestamp == 1 ]]; then
+  echo "No need to run again. Exitting..."
+  exit 0
+else
+  echo "Invalid date and time format. Exitting..."
+  exit 1
+fi
 
 ### Load config file ###
 # Check if the config file exists
@@ -46,26 +63,10 @@ echo "Setting 1: $ConsiderMeIdleAfterMinutes" #Debug
 echo "Setting 2: $FireThisWhenIdle" #Debug
 echo "Setting 3: $FireThisWhenNotIdle" #Debug
 echo "Setting 4: $CronFrequency" #Debug
-
-recentActivityTimestamp=$(</tmp/IdleRunner_last_activity_timestamp)
-
 echo "Most recent activity timestamp: $recentActivityTimestamp" #Debug
 
 
-# Regular expression pattern
-pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
 
-# Check if the date and time string matches the pattern
-if [[ $recentActivityTimestamp =~ $pattern ]]; then
-  echo "Date and time format is valid." #Debug
-
-elif [[ $recentActivityTimestamp == 1 ]]; then
-  echo "No need to run again. Exitting..."
-  exit 0
-else
-  echo "Invalid date and time format. Exitting..."
-  exit 1
-fi
 
 
 # Convert recentActivityTimestamp to a Unix timestamp
